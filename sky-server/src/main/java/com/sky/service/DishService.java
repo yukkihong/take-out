@@ -1,6 +1,5 @@
 package com.sky.service;
 
-import com.github.pagehelper.Page;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
@@ -22,4 +21,12 @@ public interface DishService {
     DishVO getByIdWithFlavor(Long id);
 
     void updateWithFlavor(DishDTO dishDTO);
+
+    /**
+     * 菜品的起售、停售
+     *
+     * @param status
+     * @param id
+     */
+    void updateStatus(Integer status, Long id);
 }
