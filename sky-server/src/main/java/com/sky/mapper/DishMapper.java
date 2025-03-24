@@ -49,4 +49,7 @@ public interface DishMapper {
      * @param ids
      */
     void deteleByIds(List<Long> ids);
+
+    @AutoFill(OperationType.UPDATE)
+    void update(Dish dish);
 }
