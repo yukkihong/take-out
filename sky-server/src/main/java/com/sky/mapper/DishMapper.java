@@ -52,4 +52,7 @@ public interface DishMapper {
 
     @AutoFill(OperationType.UPDATE)
     void update(Dish dish);
+
+    @Select("select * from sky_take_out.dish where category_id = #{categoryId}")
+    List<Dish> getListByCategoryId(Long categoryId);
 }
