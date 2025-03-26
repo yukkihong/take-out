@@ -11,3 +11,7 @@ sky:
     access-key-id: LTAI5tKLq2pp7t5EtizLvdu5
     access-key-secret: mhJ3r24STHH6TzdukwepWZKpsIDUHG
     bucket-name: sky-out-itcast-chanj
+  redis:
+    host: localhost
+    port: 6379
+    database: 10
