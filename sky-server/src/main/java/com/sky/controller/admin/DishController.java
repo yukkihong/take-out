@@ -12,9 +12,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Api("菜品相关接口")
@@ -25,10 +27,16 @@ public class DishController {
     @Autowired
     private DishService dishService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @PostMapping
     @ApiOperation("新增菜品")
     public Result save(@RequestBody DishDTO dishDTO){
         log.info("新增菜品：{}",dishDTO);
+
+        String key = "dish_" + dishDTO.getCategoryId();
+        redisTemplate.delete(key);
         dishService.saveWithFlavor(dishDTO);
         return Result.success();
     }
@@ -46,6 +54,8 @@ public class DishController {
     public Result delete(@RequestParam List<Long> ids){
         log.info("批量删除菜品:{}",ids);
         dishService.deleteBatch(ids);
+
+        cleanCache("dish_*");
         return Result.success();
     }
 
@@ -62,6 +72,9 @@ public class DishController {
     public Result update(@RequestBody DishDTO dishDTO){
         log.info("修改菜品：{}",dishDTO);
         dishService.updateWithFlavor(dishDTO);
+
+        cleanCache("dish_*");
+
         return Result.success();
     }
 
@@ -70,6 +83,9 @@ public class DishController {
     public Result updateStatus(@PathVariable("status") Integer status,@RequestParam Long id){
         log.info("菜品起售、停售:{}",status);
         dishService.updateStatus(status, id);
+
+        cleanCache("dish_*");
+
         return Result.success();
     }
 
@@ -79,5 +95,10 @@ public class DishController {
         log.info("根据分类id查询菜品:{}",categoryId);
         List<Dish> dishList = dishService.getByCategordId(categoryId);
         return Result.success(dishList);
+    }
+
+    private void cleanCache(String pattern){
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 }
